@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import FieldDoesNotExist
 from social_core.backends.oauth import BaseOAuth2
 from suapintegration import get_setting
+from suapintegration.models import LoginHistory
 
 
 def set_mapping(mapping, fieldname, response, key):
@@ -36,6 +37,7 @@ class SuapOAuth2(BaseOAuth2):
     STATE_PARAMETER = get_setting('SOCIAL_AUTH_SUAP_STATE_PARAMETER')
     USER_DATA_URL = get_setting('SOCIAL_AUTH_SUAP_USER_DATA_URL')
     AUTO_CREATE = get_setting('SOCIAL_AUTH_SUAP_AUTO_CREATE')
+    AUTO_CREATE_AS_STAFF = get_setting('SOCIAL_AUTH_SUAP_AUTO_CREATE_AS_STAFF')
 
     def user_data(self, access_token, *args, **kwargs):
         return self.request(
@@ -50,11 +52,6 @@ class SuapOAuth2(BaseOAuth2):
         User = get_user_model()
         username = response[self.ID_KEY]
 
-        splitted_name = response['nome'].split()
-        first_name, last_name = splitted_name[0], ''
-        if len(splitted_name) > 1:
-            last_name = splitted_name[-1]
-
         mapping = {}
         set_mapping(mapping, 'username', response, self.ID_KEY)
         set_mapping(mapping, 'name', response, 'nome')
@@ -63,17 +60,17 @@ class SuapOAuth2(BaseOAuth2):
         set_mapping(mapping, 'scholar_email', response, 'email_google_classroom')
         set_mapping(mapping, 'academic_email', response, 'email_academico')
         set_mapping(mapping, 'campus', response, 'campus')
-        mapping['first_name'] = first_name.strip()
-        mapping['last_name'] = last_name.strip()
-        mapping['is_staff'] = True
         mapping['is_active'] = True
 
         user = User.objects.filter(username=username).first()
         if user is None:
             if self.AUTO_CREATE:
+                mapping['is_staff'] = self.AUTO_CREATE_AS_STAFF
                 if User.objects.count() == 0:
                     mapping['is_superuser'] = True
+                    mapping['is_staff'] = True
                 user = User.objects.create(**mapping)
             else:
                 raise Exception(_("Usuário não cadastrado."))
+        LoginHistory.objects.create(user=user, ip=get_client_ip(self.strategy.request))
         return mapping

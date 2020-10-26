@@ -21,7 +21,7 @@ class AbstractSuapUser(AbstractUser):
                             help_text=_('Designates whether the user can log into this admin site.'),)
     is_active = BooleanField(_('active'), default=True,
                              help_text=_('Designates whether this user should be treated as active.'
-                                         'Unselect this instead of deleting accounts.'),)
+                                         ' Unselect this instead of deleting accounts.'),)
     created_at = DateTimeField(_('date created'), auto_now_add=True)
     changed_at = DateTimeField(_('date changed'), auto_now=True)
 
@@ -48,6 +48,13 @@ class SuapUser(AbstractSuapUser):
     def __str__(self):
         return f'{self.name}'
 
+    def save(self, *args, **kwargs):
+        if self.name:
+            splitted_name = self.name.split()
+            self.first_name = ' '.join(splitted_name[:-1])
+            self.last_name = splitted_name[-1] if len(splitted_name) > 1 else '.'
+        super().save(*args, **kwargs)
+
 
 class LoginHistory(Model):
     user = ForeignKey(get_user_model(), on_delete=CASCADE)
@@ -61,5 +68,6 @@ class LoginHistory(Model):
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_socialauth_suap_user(sender, user=None, created=False, **kwargs):
-    UserSocialAuth.objects.update_or_create(user=user, defaults={'provider': 'suap', 'uid': user.username})
+def create_socialauth_suap_user(sender, instance=None, created=False, **kwargs):
+    if instance:
+        UserSocialAuth.objects.update_or_create(user=instance, defaults={'provider': 'suap', 'uid': instance.username})
