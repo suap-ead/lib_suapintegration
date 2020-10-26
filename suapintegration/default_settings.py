@@ -13,6 +13,7 @@ SOCIAL_AUTH_SUAP_REDIRECT_STATE = env_as_bool('SOCIAL_AUTH_SUAP_REDIRECT_STATE',
 SOCIAL_AUTH_SUAP_STATE_PARAMETER = env_as_bool('SOCIAL_AUTH_SUAP_STATE_PARAMETER', True)
 SOCIAL_AUTH_SUAP_USER_DATA_URL = env('SOCIAL_AUTH_SUAP_USER_DATA_URL', 'https://suap.ifrn.edu.br/api/eu/')
 SOCIAL_AUTH_SUAP_AUTO_CREATE = env_as_bool('SOCIAL_AUTH_SUAP_AUTO_CREATE', False)
+SOCIAL_AUTH_SUAP_AUTO_CREATE_AS_STAFF = env_as_bool('SOCIAL_AUTH_SUAP_AUTO_CREATE_AS_STAFF', False)
 SOCIAL_AUTH_SUAP_EXTRA_CONTEXT_PROCESSORS = env_as_list('SOCIAL_AUTH_SUAP_EXTRA_CONTEXT_PROCESSORS',
                                                         'social_django.context_processors.backends,'
                                                         'social_django.context_processors.login_redirect')
