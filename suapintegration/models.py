@@ -55,7 +55,11 @@ class AbstractSuapUser(AbstractUser):
         abstract = True
 
     def __str__(self):
-        return f'{self.name} ({self.username}) [{self.tipo}]'
+        return f'{self.display_name} ({self.username}) [{self.tipo}]'
+
+    @property
+    def display_name(self):
+        return self.social_name or self.name
 
     @property
     def is_aluno(self):
