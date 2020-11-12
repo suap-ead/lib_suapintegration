@@ -20,43 +20,63 @@ class LoginHistoryInline(TabularInline):
     extra = 0
 
 
+class SuapUserMixinAdmin:
+    list_display = ('username', 'name', 'email', 'campus', 'get_groups')
+    list_filter = ('is_staff', 'is_superuser', 'is_active', 'campus', 'groups')
+    search_fields = ('username', 'name', 'email')
+    ordering = ['name']
+    readonly_fields = [
+        'name', 'social_name',
+        'email', 'academic_email', 'scholar_email',
+        'created_at', 'changed_at', 'last_login',
+        'campus', 'tipo', 'categoria', 'ano_ingresso', 'periodo_ingresso', 'codigo_curso'
+    ]
+
+    class Names:
+        fields = {'fields': ['username', 'name', 'social_name']}
+        title = _('Nomes')
+
+    class Vinculo:
+        fields = {'fields': ['campus', 'tipo', 'categoria', 'ano_ingresso', 'periodo_ingresso', 'codigo_curso']}
+        title = _('Vínculo')
+
+    class Emails:
+        fields = {'fields': ['email', 'academic_email', 'scholar_email']}
+        title = _('E-Mails')
+
+    class Permissoes:
+        fields = {'fields': ['is_active', 'is_staff', 'is_superuser', 'groups']}
+        title = _('Permissões')
+
+    class Datas:
+        fields = {'fields': ['created_at', 'changed_at', 'last_login']}
+        title = _('Datas')
+
+    def get_groups(self, instance):
+        result = ', '.join([x.name for x in instance.groups.all()])
+        return f'{result}'
+
+
 try:
     from tabbed_admin import TabbedModelAdmin
     @register(get_user_model())
-    class SuapUserAdmin(TabbedModelAdmin):
-        list_display = ('username', 'name', 'email', 'campus', 'get_groups')
-        list_filter = ('is_staff', 'is_superuser', 'is_active', 'campus', 'groups')
-        search_fields = ('username', 'name', 'email')
-        ordering = ['name']
-
-        readonly_fields = ['created_at', 'changed_at', 'last_login']
+    class SuapUserAdmin(SuapUserMixinAdmin, TabbedModelAdmin):
         tabs = [
-            (_('Names'), [(None, {'fields': ['username', 'campus', 'name', 'social_name']})]),
-            (_('E-Mails'), [(None, {'fields': ['email', 'academic_email', 'scholar_email']})]),
-            (_('Permissions'), [(None, {'fields': ['is_active', 'is_staff', 'is_superuser', 'groups']})]),
-            (_('Dates'), [(None, {'fields': ['created_at', 'changed_at', 'last_login']}), LoginHistoryInline]),
+            (SuapUserMixinAdmin.Names.title, [(None, SuapUserMixinAdmin.Names.fields),]),
+            (SuapUserMixinAdmin.Vinculo.title, [(None, SuapUserMixinAdmin.Vinculo.fields)]),
+            (SuapUserMixinAdmin.Emails.title, [(None, SuapUserMixinAdmin.Emails.fields)]),
+            (SuapUserMixinAdmin.Permissoes.title, [(None, SuapUserMixinAdmin.Permissoes.fields)]),
+            (SuapUserMixinAdmin.Datas.title, [(None, SuapUserMixinAdmin.Datas.fields), LoginHistoryInline]),
         ]
-
-        def get_groups(self, instance):
-            result = ', '.join([x.name for x in instance.groups.all()])
-            return f'{result}'
 except ImportError:
     @register(get_user_model())
     class SuapUserAdmin(ModelAdmin):
-        list_display = ('username', 'name', 'email', 'campus', 'get_groups')
-        list_filter = ('is_staff', 'is_superuser', 'is_active', 'campus', 'groups')
-        search_fields = ('username', 'name', 'email')
-        ordering = ['name']
         inlines = [LoginHistoryInline]
 
-        readonly_fields = ['created_at', 'changed_at', ]
         fieldsets = [
-            (None, {'fields': ['username', 'campus', 'name', 'social_name', 'created_at', 'changed_at']}),
-            (_('E-Mails'), {'fields': ['email', 'academic_email', 'scholar_email']}),
-            (_('Permissions'), {'fields': ['is_active', 'is_staff', 'is_superuser', 'groups']})
+            (None, SuapUserMixinAdmin.Names.fields),
+            (SuapUserMixinAdmin.Vinculo.title, SuapUserMixinAdmin.Vinculo.fields),
+            (SuapUserMixinAdmin.Emails.title, SuapUserMixinAdmin.Emails.fields),
+            (SuapUserMixinAdmin.Permissoes.title, SuapUserMixinAdmin.Permissoes.fields),
+            (SuapUserMixinAdmin.Datas.title, SuapUserMixinAdmin.Datas.fields),
         ]
-
-        def get_groups(self, instance):
-            result = ', '.join([x.name for x in instance.groups.all()])
-            return f'{result}'
-        pass
