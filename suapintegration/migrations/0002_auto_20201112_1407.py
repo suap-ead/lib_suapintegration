@@ -18,7 +18,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='suapuser',
             name='categoria',
-            field=models.CharField(choices=[('Não se aplica', 'Não se aplica'), ('Indeterminado', 'Indeterminado'), ('Docente', 'Docente'), ('Técnico Administrativo', 'Técnico Administrativo'), ('Estagiário', 'Estagiário')], default='Não se aplica', max_length=255, verbose_name='Categoria do servidor'),
+            field=models.CharField(choices=[
+                ('Não se aplica', 'Não se aplica'),
+                ('Indeterminado', 'Indeterminado'),
+                ('Docente', 'Docente'),
+                ('Técnico Administrativo', 'Técnico Administrativo'),
+                ('Estagiário', 'Estagiário')
+            ], default='Não se aplica', max_length=255, verbose_name='Categoria do servidor'),
         ),
         migrations.AddField(
             model_name='suapuser',
@@ -33,7 +39,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='suapuser',
             name='tipo',
-            field=models.CharField(choices=[('Indeterminado', 'Indeterminado'), ('Aluno', 'Aluno'), ('Servidor', 'Servidor'), ('Terceiro', 'Terceiro')], default='Indeterminado', max_length=255, verbose_name='Tipo de usuário'),
+            field=models.CharField(choices=[
+                ('Indeterminado', 'Indeterminado'),
+                ('Aluno', 'Aluno'),
+                ('Servidor', 'Servidor'),
+                ('Terceiro', 'Terceiro')
+            ], default='Indeterminado', max_length=255, verbose_name='Tipo de usuário'),
         ),
         migrations.AlterField(
             model_name='suapuser',

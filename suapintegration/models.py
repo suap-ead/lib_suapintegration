@@ -24,7 +24,7 @@ class AbstractSuapUser(AbstractUser):
         DOCENTE = 'Docente', _('Docente')
         TECNICO = 'Técnico Administrativo', _('Técnico Administrativo')
         ESTAGIARIO = 'Estagiário', _('Estagiário')
-    
+
     username = CharField(_('username'), max_length=150, unique=True)
     password = CharField(_('password'), max_length=128, null=True, blank=True)
     name = CharField(_('name'), max_length=255, null=True, blank=True)
@@ -38,8 +38,10 @@ class AbstractSuapUser(AbstractUser):
     created_at = DateTimeField(_('date created'), auto_now_add=True)
     changed_at = DateTimeField(_('date changed'), auto_now=True)
     tipo = CharField(_('Tipo de usuário'), max_length=255, default=Tipo.INDETERMINADO, choices=Tipo.choices)
-    categoria = CharField(_('Categoria do servidor'), max_length=255, default=Categoria.NAO_SE_APLICA,
-    choices=Categoria.choices)
+    categoria = CharField(_(
+        'Categoria do servidor'), max_length=255, default=Categoria.NAO_SE_APLICA,
+        choices=Categoria.choices
+    )
     ano_ingresso = CharField(_('Ano de ingresso'), max_length=4, null=True, blank=True)
     periodo_ingresso = CharField(_('Período de ingresso'), max_length=1, null=True, blank=True)
     codigo_curso = CharField(_('Código do curso'), max_length=10, null=True, blank=True)
@@ -88,7 +90,7 @@ class AbstractSuapUser(AbstractUser):
             raise ImproperlyConfigured("SUAP_CURSO_MODEL must be of the form 'app_label.model_name'")
         except LookupError:
             raise ImproperlyConfigured(
-                "SUAP_CURSO_MODEL refers to model '%s' that has not been installed" % 
+                "SUAP_CURSO_MODEL refers to model '%s' that has not been installed" %
                 settings.SUAP_CURSO_MODEL
             )
 

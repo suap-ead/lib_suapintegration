@@ -62,7 +62,7 @@ try:
     @register(get_user_model())
     class SuapUserAdmin(SuapUserMixinAdmin, TabbedModelAdmin):
         tabs = [
-            (SuapUserMixinAdmin.Names.title, [(None, SuapUserMixinAdmin.Names.fields),]),
+            (SuapUserMixinAdmin.Names.title, [(None, SuapUserMixinAdmin.Names.fields)]),
             (SuapUserMixinAdmin.Vinculo.title, [(None, SuapUserMixinAdmin.Vinculo.fields)]),
             (SuapUserMixinAdmin.Emails.title, [(None, SuapUserMixinAdmin.Emails.fields)]),
             (SuapUserMixinAdmin.Permissoes.title, [(None, SuapUserMixinAdmin.Permissoes.fields)]),
